@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load filters %}
+{% load djangovue %}
+
+{% block content %}
+<div class="flex-between-center py-4">
+	<h5>Dükanlar</h5>
+	<button type="button" class="btn vl-btn" data-mdb-toggle="modal" data-mdb-target="#createStore">
+		<span class="material-icons-outlined"> add </span> Täze goş
+	</button>
+</div>
+
+{% if messages %}
+	{% for message in messages %}
+		<div class="bg-rose-100 rounded-lg py-2 px-6 mb-4 text-base text-rose-500 mb-3" role="alert">{{ message }}</div>
+	{% endfor %}
+{% endif %}
+
+<form action="{% url 'stores' %}">
+	<div class="flex-between-center bg-white p-3">
+		<div class="flex-between-center gap-x-4 p-2">
+			<div class="form-outline">
+				<input type="text" name="title" value="{{ request.GET.title }}" class="form-control" />
+				<label class="form-label" for="typeText">Dükanyň ady</label>
+			</div>
+		</div>
+		<button type="submit" class="btn vl-btn">
+			<span class="material-icons-outlined"> filter_alt </span> Filter
+		</button>
+	</div>
+</form>
+
+<div class="overflow-x-scroll my-6">
+	<table class="table table-hover bg-white">
+		<thead>
+			<tr>
+				<th class="sb-2">Dükanyň ady</th>
+				<th class="sb-2">Dükanyň kody</th>
+				<th class="sb-2">Dükanyň salgysy</th>
+				<th class="sb-2">Işgär sany</th>
+				<th class="sb-2">Hereketler</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for store in stores %}
+			<tr>
+				<th class="overflow-x-hidden">{{ store.title }}</th>
+				<th>{{ store.code }}</th>
+				<th>{{ store.address }}</th>
+				<th>{{ store.workers|count }}</th>
+				<th class="text-primary-dark w-1/12">
+					<span onClick="editStoreModal({{ store.id }})" data-id="{{store.id}}" data-mdb-toggle="modal" data-mdb-target="#editStore" class="material-icons px-1 cursor-pointer hover:text-primary-light">
+						edit
+					</span>
+				</th>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock content %}
+
+{% block modal %}
+<div class="modal fade" id="createStore" data-mdb-backdrop="static" data-mdb-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content">
+			<form action="{% url 'stores' %}" method="post">
+				{% csrf_token %}
+				<div class="modal-header border-none">
+					<h5 class="modal-title" id="staticBackdropLabel">Dükan döretmek</h5>
+					<button type="button" class="btn-close text-black" data-mdb-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="form-outline my-4">
+						<input type="text" name="title" class="form-control" required />
+						<label class="form-label" for="typeText">Dükanyň ady</label>
+					</div>
+					<div class="form-outline my-4">
+						<input type="text" name="code" class="form-control" required />
+						<label class="form-label" for="typeText">Dükanyň kody</label>
+					</div>
+					<div class="form-outline my-4">
+						<input type="text" name="address" class="form-control" required />
+						<label class="form-label" for="typeText">Dükanyň salgysy</label>
+					</div>
+					<div class="w-full border">
+						<select name="employees" class="select-text w-full pl-4" multiple required>
+							{% for employee in employees %}
+								<option value="{{ employee.id }}">{{ employee }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer flex justify-end border-none">
+					<div class="">
+						<button type="button" class="btn btn-outline-primary" data-mdb-dismiss="modal">Goýbolsun et</button>
+						<button type="submit" class="btn btn-outline-primary">Döret</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="editStore" data-mdb-backdrop="static" data-mdb-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content">
+			<form action="{% url 'stores' %}" method="post">
+				{% csrf_token %}
+				{% method "put" %}
+				<input type="hidden" name="pk">
+				<div class="modal-header border-none">
+					<h5 class="modal-title" id="staticBackdropLabel">Dükan üýtgetmek</h5>
+					<button type="button" class="btn-close text-black" data-mdb-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="form-outline my-4">
+						<input type="text" name="title" class="form-control" required />
+						<label class="form-label" for="typeText">Dükanyň ady</label>
+					</div>
+					<div class="form-outline my-4">
+						<input type="text" name="code" class="form-control" required />
+						<label class="form-label" for="typeText">Dükanyň kody</label>
+					</div>
+					<div class="form-outline my-4">
+						<input type="text" name="address" class="form-control" required />
+						<label class="form-label" for="typeText">Dükanyň salgysy</label>
+					</div>
+					<div class="w-full border">
+						<select name="employees" class="select-text w-full pl-4" multiple required>
+							{% for employee in employees %}
+								<option value="{{ employee.id }}">{{ employee }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer flex justify-end border-none">
+					<div class="">
+						<button class="btn btn-outline-primary" data-mdb-dismiss="modal">Goýbolsun et</button>
+						<button type="submit" class="btn btn-outline-primary">Üýtget</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock modal %}

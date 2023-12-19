@@ -1,0 +1,33 @@
+{
+	"dependencies": {
+		"@material/banner": "^13.0.0",
+		"@material/button": "^13.0.0",
+		"@material/textfield": "^13.0.0",
+		"@material/top-app-bar": "^13.0.0",
+		"alpinejs": "^3.10.2",
+		"autoprefixer": "^10.4.4",
+		"bootstrap-icons": "^1.8.1",
+		"material-components-web": "^13.0.0",
+		"material-design-icons": "^3.0.1",
+		"material-ui": "^0.20.2",
+		"mdl-selectfield": "^1.0.4",
+		"postcss": "^8.4.12",
+		"tailwind": "^4.0.0",
+		"tailwindcss": "^3.0.24",
+		"uniq": "^1.0.1",
+		"vue": "^3.2.33"
+	},
+	"scripts": {
+		"dev": "npx tailwindcss -i ./static/assets/css/tailwind.css -o ./static/assets/css/output.css -w"
+	},
+	"devDependencies": {
+		"css-loader": "^6.7.1",
+		"extract-loader": "^5.1.0",
+		"file-loader": "^6.2.0",
+		"sass": "^1.50.0",
+		"sass-loader": "^12.6.0",
+		"webpack": "^5.72.0",
+		"webpack-cli": "^4.9.2",
+		"webpack-dev-server": "^4.8.1"
+	}
+}

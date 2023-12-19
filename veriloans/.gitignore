@@ -1,0 +1,7 @@
+*.pyc
+db.sqlite3
+migrations
+__pycache__
+node_modules
+media/
+env/

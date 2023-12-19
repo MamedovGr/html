@@ -1,0 +1,30 @@
+Running Bakcup SH Service ! 
+
+Dumping postgres database under the pg_dump function ...
+
+ Version of python: 
+
+Python 3.10.12
+
+ Sending dumped sql file to recipient lists email ... 
+
+send: 'ehlo agajanh@trl.gov.tm\r\n'
+reply: b'250-mail-nwsmtp-smtp-production-main-37.myt.yp-c.yandex.net\r\n'
+reply: b'250-8BITMIME\r\n'
+reply: b'250-PIPELINING\r\n'
+reply: b'250-SIZE 53477376\r\n'
+reply: b'250-STARTTLS\r\n'
+reply: b'250-AUTH LOGIN PLAIN XOAUTH2\r\n'
+reply: b'250-DSN\r\n'
+reply: b'250 ENHANCEDSTATUSCODES\r\n'
+reply: retcode (250); Msg: b'mail-nwsmtp-smtp-production-main-37.myt.yp-c.yandex.net\n8BITMIME\nPIPELINING\nSIZE 53477376\nSTARTTLS\nAUTH LOGIN PLAIN XOAUTH2\nDSN\nENHANCEDSTATUSCODES'
+send: 'AUTH PLAIN AGFnYWphbmhAdHJsLmdvdi50bQBIdHJOJkBNU0VxPzhtLVY=\r\n'
+reply: b'235 2.7.0 Authentication successful. 1702771159-IxwkO7TKj8c0\r\n'
+reply: retcode (235); Msg: b'2.7.0 Authentication successful. 1702771159-IxwkO7TKj8c0'
+send: 'mail FROM:<agajanh@trl.gov.tm> size=1162405224\r\n'
+reply: b'552 5.3.4 Message size exceeds fixed limit. 1702771199-IxwkO7TKj8c0-TQ17nTts\r\n'
+reply: retcode (552); Msg: b'5.3.4 Message size exceeds fixed limit. 1702771199-IxwkO7TKj8c0-TQ17nTts'
+send: 'rset\r\n'
+reply: b'250 2.1.5 Flushed 1702771199-IxwkO7TKj8c0-TQ17nTts\r\n'
+reply: retcode (250); Msg: b'2.1.5 Flushed 1702771199-IxwkO7TKj8c0-TQ17nTts'
+Email delivery failed (552, b'5.3.4 Message size exceeds fixed limit. 1702771199-IxwkO7TKj8c0-TQ17nTts', 'agajanh@trl.gov.tm')

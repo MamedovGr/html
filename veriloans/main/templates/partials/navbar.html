@@ -1,0 +1,95 @@
+{% load filters %}
+{% load static %}
+
+<nav class="flex items-center justify-between bg-white px-12">
+	<div class="flex flex-column justify-center items-center gap-y-2 logo-text text-primary-dark">
+		<a class="font-eczar" href="{% url 'index' %}">SangaBi</a>
+		<a class="font-eczar" href="{% url 'index' %}">BBB</a>
+	</div>
+	<ul class="flex justify-between gap-x-12 sb-1">
+		<li class="py-3 {% if request.resolver_match.route == '' %} nav-item-active {% else %}
+		 		   border-b-4 border-white hover:text-primary-light hover:border-b-4 hover:border-primary-light {% endif %}">
+			<a href="{% url 'index' %}">Dashboard</a>
+		</li>
+		<li class="py-3 {% if request.resolver_match.route|startswith:'loans' %} nav-item-active {% else %}
+		 		   border-b-4 border-white hover:text-primary-light hover:border-b-4 hover:border-primary-light {% endif %}">
+			<a href="{% url 'loans:index' %}">Algylar</a>
+		</li>
+		<li class="py-3 {% if request.resolver_match.route|startswith:'customers' %} nav-item-active {% else %}
+		 		   border-b-4 border-white hover:text-primary-light hover:border-b-4 hover:border-primary-light {% endif %}">
+			<a href="{% url 'customers' %}">Müşderiler</a>
+		</li>
+		{% if user.is_admin %}
+		<li class="py-3 {% if request.resolver_match.route|startswith:'stores' %} nav-item-active {% else %}
+		 		   border-b-4 border-white hover:text-primary-light hover:border-b-4 hover:border-primary-light {% endif %}">
+			<a href="{% url 'stores' %}">Dükanlar</a>
+		</li>
+		<li class="py-3 {% if request.resolver_match.route|startswith:'employees' %} nav-item-active {% else %}
+		 		   border-b-4 border-white hover:text-primary-light hover:border-b-4 hover:border-primary-light {% endif %}">
+			<a href="{% url 'employees' %}">Işgärler</a>
+		</li>
+		{% endif %}
+		<li class="py-3 {% if request.resolver_match.route|startswith:'reports' %} nav-item-active {% else %}
+		 		   border-b-4 border-white hover:text-primary-light hover:border-b-4 hover:border-primary-light {% endif %}">
+			<a href="{% url 'reports' %}">Hasabat</a>
+		</li>
+	</ul>
+	<div class="flex-between-center gap-x-4">
+		<div class="relative select border">
+			<select onchange="javascript:handleSelect(this)" class="select-text pl-6">
+				<option selected disabled>{{ request.session.store|get_store_with_id }}</option>
+				<option value="all">Hemmesi</option>
+				{% for store in user.employee.store_set.all %}
+					<option value="{{ store.id }}">{{ store.title }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div class="dropdown">
+			<a class="d-flex align-items-center" href="#" dropdown-toggle hidden-arrow" id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+				<img src="{% static 'assets/images/profile.jpg' %}" class="rounded-circle" width="30" height="30" alt="Black and White Portrait of a Man" loading="lazy" />
+				<span class="material-icons-outlined"> expand_more </span>
+			</a>
+			<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+				<li>
+					<a class="dropdown-item" href="{% url 'loans:draft' %}">Sebet</a>
+				</li>
+				<!-- <li>
+					<a class="dropdown-item" data-mdb-toggle="modal" data-mdb-target="#changePassword" href="#">Parol çalyşmak</a>
+				</li> -->
+				<li><hr></li>
+				<li>
+					<a class="dropdown-item" href="{% url 'accounts:logout' %}">Ulgamdan çykmak</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>
+
+
+<!-- Modal -->
+<div class="modal fade" id="changePassword" data-mdb-backdrop="static" data-mdb-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header border-none">
+				<h5 class="modal-title" id="staticBackdropLabel">Parol çalyşmak</h5>
+				<button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="form-outline my-4">
+					<input type="text" id="typeText" class="form-control" />
+					<label class="form-label" for="typeText">Köne parol</label>
+				</div>
+				<div class="form-outline my-4">
+					<input type="text" id="typeText" class="form-control" />
+					<label class="form-label" for="typeText">Täze parol</label>
+				</div>
+			</div>
+			<div class="modal-footer border-none">
+				<div>
+					<button type="button" class="btn btn-outline-primary" data-mdb-dismiss="modal">Goýbolsun et</button>
+					<button type="button" class="btn btn-outline-primary">Üýtget</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

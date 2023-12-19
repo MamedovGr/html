@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load filters %}
+
+{% block content %}
+
+<div class="flex-between-center py-4">
+	<h5>Müşderiler ( {{customers.count}} )</h5>
+	<a href="{% url 'customers-create' %}"><button type="button" class="btn vl-btn">
+		<span class="material-icons-outlined"> add </span> Täze goş
+	</button></a>
+</div>
+
+{% if messages %}
+	{% for message in messages %}
+		<div class="bg-emerald-100 rounded-lg py-2 px-6 mb-4 text-base text-emerald-500 mb-3" role="alert">{{ message }}</div>
+	{% endfor %}
+{% endif %}
+
+<form action="{% url 'customers' %}">
+	<div class="flex-between-center bg-white p-3">
+		<div class="flex-between-center gap-x-4 p-2">
+				<div class="form-outline">
+					<input type="text" name="client" value="{{ request.GET.client }}" class="form-control" />
+					<label class="form-label" for="typeText">Müşderi</label>
+				</div>
+				<div class="form-outline">
+					<input type="text" name="passport_id" value="{{ request.GET.passport_id }}" class="form-control" />
+					<label class="form-label" for="typeText">Passport Seriýa</label>
+				</div>
+				<div class="relative select border">
+					<select name="in_blacklist" class="select-text pl-6">
+						<option value="" disabled></option>
+						<option value="Hemmesi" {% if 'Hemmesi' == request.GET.in_blacklist %} selected {% endif %}>Hemmesi</option>
+						<option value="Gara sanawdakylar" {% if 'Gara sanawdakylar' == request.GET.in_blacklist %} selected {% endif %}>Gara sanawdakylar</option>
+					</select>
+				</div>
+		</div>
+		<div class="flex-between-center gap-x-4">
+			<button type="submit" class="btn vl-btn">
+				<span class="material-icons-outlined"> filter_alt </span> Filter
+			</button>
+			{% if user.is_admin %}
+				<a href="{% url 'customer-unlock-query' %}?client={{ request.GET.client }}&passport_id={{ request.GET.passport_id }}" class="btn vl-btn">
+					<span class="material-icons-outlined"> lock_open </span> Unlock
+				</a>
+				<a href="{% url 'customer-lock-query' %}?client={{ request.GET.client }}&passport_id={{ request.GET.passport_id }}" class="btn vl-btn">
+					<span class="material-icons-outlined"> lock </span> Lock
+				</a>
+			{% endif %}
+		</div>
+	</div>
+</form>
+
+<div class="overflow-x-scroll my-6">
+	<table class="table table-hover bg-white">
+		<thead>
+			<tr>
+				<!-- <th class="sb-2"></th> -->
+				<th style="padding-left: 40px !important;" class="sb-2">Doly Ady</th>
+				<th class="sb-2">Passport Seriýa</th>
+				<th class="sb-2">Etrap</th>
+				<th class="sb-2">Ýazgyda duran ýeri</th>
+				<th class="sb-2">Telefon</th>
+				<th class="sb-2 text-center">Hereketler</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for customer in customers %}
+			<tr>
+				<!-- <th><span class="block rounded-full mt-1 w-6 h-3 bg-rose-400"></span></th> -->
+				<th style="padding-left: 40px !important;">{{ customer.get_full_name }}</th>
+				<th>{{ customer.passport_id }}</th>
+				<th>{{ customer.county }}</th>
+				<th>{{ customer.registration }}</th>
+				<th>+993{{ customer.phone }}</th>
+				<th class="flex-around-center text-primary-dark">
+
+					<a href="#" title="{{ customer.notes|lor:'Bellik ýok' }}" data-mdb-toggle="tooltip"><span class="material-icons cursor-pointer hover:text-primary-light">
+						info
+					</span></a>
+					<a href="{{ customer.get_absolute_url }}"><span class="material-icons cursor-pointer hover:text-primary-light">
+						visibility
+					</span></a>
+
+					{% if not user.is_admin and customer.editable or user.is_admin %}
+						<a href="{% url 'customers-update' customer.id %}"><span class="material-icons cursor-pointer hover:text-primary-light">
+							edit
+						</span></a>
+					{% else %}
+						<a href="#"><span class="material-icons cursor-pointer hover:text-primary-light">
+							lock
+						</span></a>
+					{% endif %}
+
+					{% if user.is_admin %}
+						<a href="{% url 'customer-lock-toggle' customer.id %}"><span class="material-icons cursor-pointer hover:text-primary-light">
+							{% if customer.editable %} lock_open {% else %} lock {% endif %}
+						</span></a>
+						<a href="{% url 'customer-blacklist-toggle' customer.id %}"><span class="material-icons cursor-pointer hover:text-primary-light">
+							{% if customer.in_blacklist %} gpp_bad {% else %} gpp_good {% endif %}
+						</span></a>
+					{% endif %}
+
+				</th>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+{% endblock content %}
+
+{% block css %}
+<style media="screen">
+	.overflow-x-scroll th {
+		padding: 20px 8px !important;
+	}
+
+	.overflow-x-scroll th span {
+		font-size: 24px !important;
+	}
+
+	.overflow-x-scroll table {
+		min-width: 1150px !important;
+	}
+</style>
+{% endblock css %}

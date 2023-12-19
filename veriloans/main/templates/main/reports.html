@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load filters %}
+{% load djangovue %}
+
+{% block content %}
+<div class="flex-between-center py-4">
+	<h5>Hasabat</h5>
+	<div class="flex-between-center gap-x-4">
+		<a href="{% url 'reports' %}"><button type="button" class="btn vl-btn">
+			Töleg Hasabat
+		</button></a>
+		<a href="{% url 'loan-reports' %}"><button type="button" class="btn btn-outline-primary">
+			Algy Hasabat
+		</button></a>
+	</div>
+</div>
+
+<div class="overflow-x-scroll scroll-hide">
+	<form action="{% url 'reports' %}">
+		<div class="flex-between-center bg-white p-3 min-w-[1250px]">
+			<div class="flex-between-center gap-x-4 p-2">
+				<div class="flex-between-center form-outline cursor-pointer py-2 w-64 px-3">
+					<span class="material-icons-outlined">
+						calendar_today
+					</span>
+					<input id="example" name="from_date" value="{{ request.GET.from_date }}" placeholder="Başdaky senesi" pattern="{% D_M_Y %}" type="text" class="form-control absolute text-center cursor-pointer" />
+					<span class="material-icons-outlined">
+						arrow_drop_down
+					</span>
+				</div>
+				<div class="flex-between-center form-outline cursor-pointer py-2 w-64 px-3">
+					<span class="material-icons-outlined">
+						calendar_today
+					</span>
+					<input id="example2" name="to_date" value="{{ request.GET.to_date }}" placeholder="Soňky senesi" pattern="{% D_M_Y %}" type="text" class="form-control absolute text-center cursor-pointer" />
+					<span class="material-icons-outlined">
+						arrow_drop_down
+					</span>
+				</div>
+				<div class="relative select border">
+					<select name="type" class="select-text pl-6">
+						<option value="" disabled></option>
+						<option value="Hemmesi" {% if 'Hemmesi' == request.GET.type %} selected {% endif %}>Hemme görnüş</option>
+						<option value="Nagt" {% if 'Nagt' == request.GET.type %} selected {% endif %}>Nagt töleg</option>
+						<option value="Kart" {% if 'Kart' == request.GET.type %} selected {% endif %}>Kartdan töleg</option>
+					</select>
+				</div>
+				<div class="relative select border w-72 {% if user.employee.is_worker %} hidden {% endif %}">
+					<select name="employee" class="select-text pl-6">
+						<option value="" disabled></option>
+						<option {% if 'Hemmesi' == request.GET.employee %} selected {% endif %}>Hemme işgär</option>
+						{% for employee in employees%}
+							<option value="{{ employee.user.username }}" {% if employee.user.username == request.GET.employee %} selected {% endif %}>{{ employee.user.first_name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-outline">
+					<input type="text" name="transaction_id" value="{{ request.GET.transaction_id }}" class="form-control" />
+					<label class="form-label" for="typeText">Töleg nomer</label>
+				</div>
+			</div>
+			<div class="flex-between-center gap-x-4	">
+				<button type="submit" class="btn vl-btn">
+					<span class="material-icons-outlined"> filter_alt </span> Filter
+				</button>
+				<a href="{% url 'export_reports_xls' %}?from_date={{ request.GET.from_date }}&to_date={{ request.GET.to_date }}&type={{ request.GET.type }}" class="btn vl-btn bg-green-700">
+					<span class="material-icons-outlined"> ios_share </span> Excell
+				</a>
+			</div>
+		</div>
+	</form>
+</div>
+
+<div class="bg-white mt-6 px-6 py-4">
+	<div class="overflow-x-scroll">
+		<table class="table table-hover bg-white">
+			<thead>
+				<tr class="bg-disable-gray">
+					<th class="sb-2">Dükan</th>
+					<th class="sb-2">Şertnama ( {{ transactions.count }} )</th>
+					<th class="sb-2">Töleg</th>
+					<th class="sb-2">Müşderi</th>
+					<th class="sb-2">Geçirilen töleg ( {{ amount }} m )</th>
+					<th class="sb-2">Töleg görnüşi</th>
+					<th class="sb-2">Geçirilen wagty</th>
+					<th class="sb-2">Töleg geçiren işgär</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for transaction in transactions %}
+				<tr>
+					<th>{{ transaction.loan.store }}</th>
+					<th><a href="{{ transaction.loan.get_absolute_url }}">{{ transaction.loan.get_id }}</a></th>
+					<th><a href="{{ transaction.get_absolute_url }}">{{ transaction.id }}</a></th>
+					<th><a href="{{ transaction.loan.customer.get_absolute_url }}">{{ transaction.loan.customer }}</a></th>
+					<th class="text-emerald-400">{{ transaction.amount_price }} m</th>
+					<th>{{ transaction.type }}</th>
+					<th>{{ transaction.created|date:"d-m-Y H:i:s" }}</th>
+					<th>{{ transaction.employee.user.first_name }}</th>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock content %}
+
+{% block css %}
+<style media="screen">
+	.overflow-x-scroll th {
+		padding: 20px 8px !important;
+		height: 70px !important;
+	}
+
+	.overflow-x-scroll th span {
+		font-size: 24px !important;
+	}
+
+	.overflow-x-scroll table {
+		min-width: 1150px !important;
+	}
+</style>
+{% endblock css %}

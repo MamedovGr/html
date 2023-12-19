@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" dir="ltr">
+
+<head>
+	<meta charset="utf-8">
+	<title>SangaBi BBB</title>
+	<link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+	<!-- <link rel="stylesheet" href="{% static 'assets/css/iconfont/material-icons.css' %}"> -->
+	<link href="{% static 'assets/css/mdb.min.css' %}" rel="stylesheet">
+	<link href="{% static 'assets/css/output.css' %}" rel="stylesheet">
+	<link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+	<link href="{% static 'assets/css/mc-calendar.min.css' %}" rel="stylesheet">
+	{% block css %}{% endblock css %}
+</head>
+
+<body class="bg-slate-100 font-roboto">
+	{% include 'partials/navbar.html' %}
+	<main class="px-12 py-8">
+		{% block content %}{% endblock content %}
+		{% block modal %}{% endblock modal %}
+	</main>
+	<script src="{% static 'assets/js/vue.global.js' %}"></script>
+	<script src="{% static 'assets/js/mdb.min.js' %}" charset="utf-8"></script>
+	<script src="{% static 'assets/js/mc-calendar.min.js' %}" charset="utf-8"></script>
+	<script src="{% static 'assets/js/modules/helpers.js' %}" charset="utf-8"></script>
+	<script src="{% static 'assets/js/modules/services.js' %}" charset="utf-8"></script>
+	<script src="{% static 'assets/js/modules/ajax-requests.js' %}" charset="utf-8"></script>
+	<script src="{% static 'assets/js/vue-components.js' %}" charset="utf-8"></script>
+	<script type="text/javascript">
+		function handleSelect(e) {
+			window.location = "/switch/store/" + e.value;
+		}
+	</script>
+	{% block js %}{% endblock js %}
+</body>
+
+</html>

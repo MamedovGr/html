@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load djangovue %}
+{% load filters %}
+
+{% block content %}
+
+<form action="{% url 'customers-detail' customer.id %}" method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+
+	<div class="flex-between-center py-4">
+		<div class="flex items-center space-x-4">
+			<a href="{% url 'customers' %}"><span class="material-icons-outlined py-1">
+				keyboard_backspace
+			</span></a>
+			<p class="sb-1">Müşderiler </p>
+			<h5> / Müşderi maglumatlary</h5>
+		</div>
+	</div>
+
+	{% if messages %}
+	    {% for message in messages %}
+			<div class="bg-rose-100 rounded-lg py-2 px-6 mb-4 text-base text-rose-500 mb-3" role="alert">{{ message }}</div>
+		{% endfor %}
+	{% endif %}
+
+	<div class="flex justify-between bg-white space-x-8 px-4 py-6">
+		<div class="w-1/2">
+			<h6 class="text-black py-4">Müşderi barada</h6>
+			<div class="grid grid-cols-2 gap-x-4 gap-y-6">
+				<div class="form-outline">
+					<input disabled type="text" name="last_name" value="{{ customer.last_name }}" class="form-control" required />
+					<label class="form-label" for="typeText">Familýasy</label>
+				</div>
+				<div class="form-outline">
+					<input disabled type="text" name="first_name" value="{{ customer.first_name }}" class="form-control" required />
+					<label class="form-label" for="typeText">Ady</label>
+				</div>
+				<div class="form-outline">
+					<input disabled type="text" name="patronymic" value="{{ customer.patronymic }}" class="form-control" required />
+					<label class="form-label" for="typeText">Atasynyň ady</label>
+				</div>
+				<div class="form-outline">
+					<input disabled type="text" name="passport_id" value="{{ customer.passport_id }}" class="form-control" required minlength="10" maxlength="11" />
+					<label class="form-label" for="typeText">Passport seriýa</label>
+				</div>
+				<div class="form-outline">
+					<input disabled type="text" name="passport_id" value="{{ customer.birthday|date:'d-m-Y' }}" class="form-control" required minlength="10" maxlength="11" />
+					<label class="form-label" for="typeText">Dogulan senesi</label>
+				</div>
+				<div class="form-outline">
+					<input disabled type="number" name="age" value="{{ customer.age }}" required class="form-control" />
+					<label class="form-label" for="typeText">Ýaşy</label>
+				</div>
+			</div>
+			<div class="form-outline mt-6">
+				<input disabled type="text" name="phone" value="+993{{ customer.phone }}" required minlength="12" class="form-control" />
+				<label class="form-label" for="typeText">Telefon nomer</label>
+			</div>
+			<div class="grid grid-cols-2 gap-x-4 gap-y-6">
+				<div class="form-outline my-6">
+					<input disabled type="text" name="phone2" value="+993{{ customer.phone2 }}" class="form-control" required minlength="12" />
+					<label class="form-label" for="typeText">Telefon nomer 2</label>
+				</div>
+				<div class="form-outline my-6">
+					<input disabled type="text" name="phone3" value="+993{{ customer.phone3 }}" class="form-control" required minlength="12" />
+					<label class="form-label" for="typeText">Telefon nomer 3</label>
+				</div>
+			</div>
+		</div>
+		<div class="w-1/2">
+			<h6 class="text-black text-end py-4">Müşderiniň umumy bergisi: <span class="text-slate-600">{{ customer.get_payment_amount }} m</span></h6>
+			<div class="form-outline">
+				<input disabled type="text" name="work_place" value="{{ customer.work_place }}" required class="form-control" />
+				<label class="form-label" for="typeText">Iş ýeri</label>
+			</div>
+			<div class="form-outline mt-6">
+				<input disabled type="text" name="registration" value="{{ customer.registration }}" required class="form-control" />
+				<label class="form-label" for="typeText">Ýazgyda duran ýeri</label>
+			</div>
+			<div class="grid grid-cols-2 gap-x-4 gap-y-6 py-6">
+				<div class="form-outline">
+					<input disabled type="text" name="passport_id" value="{{ customer.passport_created_date|date:'d-m-Y' }}" class="form-control" required minlength="10" maxlength="11" />
+					<label class="form-label" for="typeText">Passport berlen senesi</label>
+				</div>
+				<div class="form-outline">
+					<input disabled type="text" name="county" value="{{ customer.county }}" class="form-control" required />
+					<label class="form-label" for="typeText">Passport kim tarapyndan berildi</label>
+				</div>
+				<div class="form-outline">
+					<input disabled type="text" name="passport_id" value="{{ customer.type }}" class="form-control" required minlength="10" maxlength="11" />
+					<label class="form-label" for="typeText">Wezipesi</label>
+				</div>
+				<div class="form-outline">
+					<input disabled type="text" name="notes" value="{{ customer.notes }}" class="form-control" />
+					<label class="form-label" for="typeText">Bellik</label>
+				</div>
+			</div>
+
+			<div class="form-outline mt-4 relative cursor-pointer {% if not customer.get_file %} hidden {% endif %}">
+				<input type="text" id="typeText" class="form-control" disabled />
+				<label id="fileLabel" class="form-label" for="typeText">1-nji faýly: {{ customer.get_file }}</label>
+				<a href="{{ customer.get_file }}" download><span class="material-icons cursor-pointer absolute right-2 top-1"> download </span><a/>
+			</div>
+
+			<div class="form-outline relative mt-2 {% if not customer.get_file2 %} hidden {% endif %}">
+				<input type="text" id="typeText" class="form-control" disabled />
+				<label id="fileLabel2" class="form-label" for="typeText">2-nji faýly: {{ customer.get_file2 }}</label>
+				<a href="{{ customer.get_file2 }}" download><span class="material-icons cursor-pointer absolute right-2 top-1"> download </span><a/>
+			</div>
+		</div>
+	</div>
+</form>
+
+{% for loan in customer.loan_set.unclosed %}
+	<div class="bg-white mt-6 px-6 py-4">
+
+		<div class="flex-between-center bg-white mt-6 p-4">
+			<h6 class="text-black">{{ loan.created|date:"d-m-Y" }} senede alan algysy</h6>
+		</div>
+		<div class="overflow-x-scroll">
+			<table class="table table-hover bg-white">
+				<thead>
+					<tr class="bg-disable-gray">
+						<th class="sb-2">Dükan</th>
+						<th class="sb-2">Şertnama</th>
+						<th class="sb-2">Müşderi</th>
+						<th class="sb-2">Telefon</th>
+						<th class="sb-2">Möçberi</th>
+						<th class="sb-2">Tölenen</th>
+						<th class="sb-2 text-rose-600">Gijä galan bergisi</th>
+						<th class="sb-2">Aýdaky galany</th>
+						<th class="sb-2">Umumy galany</th>
+						<th class="sb-2">Alan wagty</th>
+						<th class="sb-2">Bermeli wagty</th>
+						<th class="sb-2">Galan güni</th>
+						<th class="sb-2">Umumy galan güni</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th>{{ loan.store }}</th>
+						<th>{{ loan.get_id }}</th>
+						<th>{{ loan.customer }}</th>
+						<th>{{ loan.customer.phone }}</th>
+						<th>{{ loan.first_amount_price }}</th>
+						<th class="text-emerald-400">{{ loan.payed_amount_summary }} m</th>
+						<th class="text-rose-600">{{ loan.only_lated_unpayed_loanplans_amount }} m</th>
+						<th>{{ loan.next_loanplan_payment_amount }} m</th>
+						<th class="text-rose-600">{{ loan.amount_price }} m</th>
+						<th>{{ loan.created|date:'d-m-Y H:i' }}</th>
+						<th>{{ loan.next_expiration_time|date:'d-m-Y H:i' }}</th>
+						<th>{{ loan.next_expiration_time|expiration }} gün</th>
+						<th>{{ loan.expiration_time|expiration }} gün</th>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="flex-between-center p-4">
+			<p class="sb-1">Töleg Taryhy</p>
+		</div>
+		<div class="overflow-x-scroll">
+			<table class="table table-hover bg-white">
+				<thead>
+					<tr class="bg-disable-gray">
+						<th class="sb-2">Töleg nomer</th>
+						<th class="sb-2">Töleg geçiren işgär</th>
+						<th class="sb-2">Geçirilen töleg</th>
+						<th class="sb-2">Töleg görnüşi</th>
+						<th class="sb-2">Geçirilen wagty</th>
+						<th class="sb-2">Bellik</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for transaction in loan.transaction_set.all %}
+					<tr>
+						<th>{{ transaction.id }}</th>
+						<th>{{ transaction.employee }}</th>
+						<th class="text-emerald-400">{{ transaction.amount_price }} m</th>
+						<th>{{ transaction.type }}</th>
+						<th>{{ transaction.created|date:"d-m-Y H:i:s" }}</th>
+						<th class="text-primary-dark">
+							<a href="#" title="{{ transaction.note|lor:'Bellik ýok' }}">
+								<span class="material-icons cursor-pointer hover:text-primary-light">
+									info
+								</span>
+							</a>
+						</th>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+{% endfor %}
+
+{% for loan in customer.loan_set.closed %}
+	<div class="bg-white mt-6 px-6 py-4">
+
+		<div class="flex-between-center bg-white mt-6 p-4">
+			<h6 class="text-black">{{ loan.updated|date:"d-m-Y" }} senede ýapan algysy</h6>
+		</div>
+		<div class="overflow-x-scroll">
+			<table class="table table-hover bg-emerald-50">
+				<thead>
+					<tr class="bg-disable-gray">
+						<th class="sb-2">Dükan</th>
+						<th class="sb-2">Şertnama</th>
+						<th class="sb-2">Müşderi</th>
+						<th class="sb-2">Telefon</th>
+						<th class="sb-2">Möçberi</th>
+						<th class="sb-2">Alan wagty</th>
+						<th class="sb-2">Ýapan wagty</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th>{{ loan.store }}</th>
+						<th>{{ loan.get_id }}</th>
+						<th>{{ loan.customer }}</th>
+						<th>{{ loan.customer.phone }}</th>
+						<th>{{ loan.first_amount_price }} m</th>
+						<th>{{ loan.created|date:'d-m-Y H:i' }}</th>
+						<th>{{ loan.updated|date:'d-m-Y H:i' }}</th>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="flex-between-center p-4">
+			<p class="sb-1">Töleg Taryhy</p>
+		</div>
+		<div class="overflow-x-scroll">
+			<table class="table table-hover bg-emerald-50">
+				<thead>
+					<tr class="bg-disable-gray">
+						<th class="sb-2">Töleg geçiren işgär</th>
+						<th class="sb-2">Geçirilen töleg</th>
+						<th class="sb-2">Töleg görnüşi</th>
+						<th class="sb-2">Geçirilen wagty</th>
+						<th class="sb-2">Bellik</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for transaction in loan.transaction_set.all %}
+					<tr>
+						<th>{{ transaction.employee }}</th>
+						<th class="text-emerald-400">{{ transaction.amount_price }} m</th>
+						<th>{{ transaction.type }}</th>
+						<th>{{ transaction.created|date:"d-m-Y H:i:s" }}</th>
+						<th class="text-primary-dark">
+							<a href="#" title="{{ transaction.note|lor:'Bellik ýok' }}">
+								<span class="material-icons cursor-pointer hover:text-primary-light">
+									info
+								</span>
+							</a>
+						</th>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+{% endfor %}
+
+{% endblock content %}
+
+{% block css %}
+<style media="screen">
+	.overflow-x-scroll th {
+		padding: 20px 8px !important;
+	}
+
+	.overflow-x-scroll th > span {
+		font-size: 20px !important;
+	}
+
+	.overflow-x-scroll table {
+		min-width: 1150px !important;
+	}
+</style>
+{% endblock css %}
+
+{% block js %}
+<script src="{% static 'assets/js/file.js' %}" charset="utf-8"></script>
+{% endblock js %}

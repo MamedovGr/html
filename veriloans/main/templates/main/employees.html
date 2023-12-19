@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load filters %}
+{% load djangovue %}
+
+{% block content %}
+<div class="flex-between-center py-4">
+	<h5>Işgärler</h5>
+	<button type="button" class="btn vl-btn" data-mdb-toggle="modal" data-mdb-target="#createEmployee">
+		<span class="material-icons-outlined"> add </span> Täze goş
+	</button>
+</div>
+
+{% if messages %}
+	{% for message in messages %}
+		{% if message.tags == 'error' %}
+			<div class="bg-rose-100 rounded-lg py-2 px-6 mb-4 text-base text-rose-500 mb-3" role="alert">{{ message }}</div>
+		{% else %}
+			<div class="bg-emerald-100 rounded-lg py-2 px-6 mb-4 text-base text-emerald-500 mb-3" role="alert">{{ message }}</div>
+		{% endif %}
+	{% endfor %}
+{% endif %}
+
+<form action="{% url 'employees' %}">
+	<div class="flex-between-center bg-white p-3">
+		<div class="flex-between-center gap-x-4 p-2">
+			<div class="form-outline">
+				<input type="text" name="first_name"  value="{{ request.GET.first_name }}" class="form-control" />
+				<label class="form-label">Işgäriň ady</label>
+			</div>
+			<div class="form-outline">
+				<input type="text" name="username" value="{{ request.GET.username }}" class="form-control" />
+				<label class="form-label">Ulanyjy ady</label>
+			</div>
+			<div class="select border">
+				<select name="status" class="select-text pl-4">
+					<option value="">Hemmesi</option>
+					{% for status in statuses %}
+						<option value="{{ status.title }}" {% if status.title == request.GET.status %} selected {% endif %}>{{ status.title }}</option>
+					{% endfor %}
+				</select>
+				<label class="select-label">Wezipesi</label>
+			</div>
+		</div>
+		<button type="submit" class="btn vl-btn">
+			<span class="material-icons-outlined"> filter_alt </span> Filter
+		</button>
+	</div>
+</form>
+
+<div class="overflow-x-scroll my-6">
+	<table class="table table-hover bg-white">
+		<thead>
+			<tr>
+				<th class="sb-2">Işgäriň ady</th>
+				<th class="sb-2">Login</th>
+				<th class="sb-2">Paroly</th>
+				<th class="sb-2">Işleýän dükanlary</th>
+				<th class="sb-2">Wezipesi</th>
+				<th class="sb-2">Hereketler</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for employee in employees %}
+			<tr>
+				<th class="overflow-x-hidden">{{ employee.user.first_name }}</th>
+				<th>{{ employee.user.username }}</th>
+				<th>{{ employee.password_in_text }}</th>
+				<th>{% for store in employee.store_set.all %} {{ store }} / {% empty %} - {% endfor %}</th>
+				<th>{{ employee.status }}</th>
+				<th class="text-primary-dark w-1/12">
+					<span onClick="editEmployeeModal({{ employee.id}})" data-mdb-toggle="modal" data-id="{{employee.id}}" data-mdb-target="#editEmployee" class="material-icons px-1 cursor-pointer hover:text-primary-light">
+						edit
+					</span>
+				</th>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock content %}
+
+{% block modal %}
+<div class="modal fade" id="createEmployee" data-mdb-backdrop="static" data-mdb-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content">
+			<form action="{% url 'employees' %}" method="post">
+			{% csrf_token %}
+				<div class="modal-header border-none">
+					<h5 class="modal-title" id="staticBackdropLabel">Işgär döretmek</h5>
+					<button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="form-outline my-4">
+						<input type="text" name="first_name" class="form-control" required />
+						<label class="form-label">Doly ady</label>
+					</div>
+					<div class="form-outline my-4">
+						<input type="text" name="username" class="form-control" required />
+						<label class="form-label">Login</label>
+					</div>
+					<div class="form-outline my-4">
+						<input type="password" name="password" class="form-control" required />
+						<label class="form-label">Paroly</label>
+					</div>
+					<div class="select w-full border my-4">
+						<select name="status" class="select-text w-full pl-4" required>
+							<option value="" disabled selected></option>
+							{% for status in statuses %}
+								<option value="{{ status.title }}">{{ status.title }}</option>
+							{% endfor %}
+						</select>
+						<label class="select-label">Wezipesi</label>
+					</div>
+				</div>
+				<div class="modal-footer flex justify-end border-none">
+					<div class="">
+						<button type="button" class="btn btn-outline-primary" data-mdb-dismiss="modal">Goýbolsun et</button>
+						<button type="submit" class="btn btn-outline-primary">Täze işgär goş</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="editEmployee" data-mdb-backdrop="static" data-mdb-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content">
+			<form action="{% url 'employees' %}" method="post">
+				{% csrf_token %}
+				{% method "put" %}
+				<input type="hidden" name="pk">
+				<div class="modal-header border-none">
+					<h5 class="modal-title">Işgär üýtgetmek</h5>
+					<button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="form-outline my-4">
+						<input type="text" name="first_name" class="form-control" required />
+						<label class="form-label">Doly ady</label>
+					</div>
+					<div class="form-outline my-4">
+						<input type="text" name="username" class="form-control" required />
+						<label class="form-label">Login</label>
+					</div>
+					<div class="form-outline my-4">
+						<input type="text" name="password_in_text" class="form-control" required />
+						<label class="form-label">Paroly</label>
+					</div>
+				</div>
+				<div class="modal-footer flex justify-end border-none">
+					<div class="">
+						<button type="button" class="btn btn-outline-primary" data-mdb-dismiss="modal">Goýbolsun et</button>
+						<button type="submit" class="btn btn-outline-primary">Üýtget</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock modal %}
